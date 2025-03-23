@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asymmetric Encryption</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        textarea { width: 100%; height: 100px; margin-bottom: 10px; }
+        button { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Asymmetric Encryption Demo</h1>
+
+    <!-- ส่วนสร้างคู่คีย์ -->
+    <h2>1. สร้างคู่คีย์</h2>
+    <button onclick="generateKeys()">สร้างคู่คีย์</button>
+    <textarea id="privateKey" placeholder="Private Key"></textarea>
+    <textarea id="publicKey" placeholder="Public Key"></textarea>
+
+    <!-- ส่วนเข้ารหัสข้อความ -->
+    <h2>2. เข้ารหัสข้อความ</h2>
+    <textarea id="messageToEncrypt" placeholder="ข้อความที่จะเข้ารหัส"></textarea>
+    <button onclick="encryptMessage()">เข้ารหัสข้อความ</button>
+    <textarea id="encryptedMessage" placeholder="ข้อความที่เข้ารหัส"></textarea>
+
+    <!-- ส่วนถอดรหัสข้อความ -->
+    <h2>3. ถอดรหัสข้อความ</h2>
+    <textarea id="encryptedMessageToDecrypt" placeholder="ข้อความที่เข้ารหัส"></textarea>
+    <button onclick="decryptMessage()">ถอดรหัสข้อความ</button>
+    <textarea id="decryptedMessage" placeholder="ข้อความที่ถอดรหัส"></textarea>
+
+    <script>
+        // แทนที่ URL นี้ด้วย URL ของ Flask API บน Render
+        const API_URL = 'https://encryption-message-backend.onrender.com';
+        
+        // ฟังก์ชันสำหรับสร้างคู่คีย์      
+        // ตัวอย่างการเรียก API
+        async function generateKeys() {
+            const response = await fetch(`${API_URL}/generate_keys`);
+            const data = await response.json();
+            document.getElementById('privateKey').value = data.private_key;
+            document.getElementById('publicKey').value = data.public_key;
+        }
+
+        // ฟังก์ชันสำหรับเข้ารหัสข้อความ
+        async function encryptMessage() {
+            const message = document.getElementById('messageToEncrypt').value;
+            const publicKey = document.getElementById('publicKey').value;
+            const response = await fetch('/encrypt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message, public_key: publicKey })
+            });
+            const data = await response.json();
+            document.getElementById('encryptedMessage').value = data.encrypted_message;
+        }
+
+        // ฟังก์ชันสำหรับถอดรหัสข้อความ
+        async function decryptMessage() {
+            const encryptedMessage = document.getElementById('encryptedMessageToDecrypt').value;
+            const privateKey = document.getElementById('privateKey').value;
+            const response = await fetch('/decrypt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ encrypted_message: encryptedMessage, private_key: privateKey })
+            });
+            const data = await response.json();
+            document.getElementById('decryptedMessage').value = data.decrypted_message;
+        }
+    </script>
+</body>
+</html>
