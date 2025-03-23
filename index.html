@@ -48,7 +48,7 @@
         async function encryptMessage() {
             const message = document.getElementById('messageToEncrypt').value;
             const publicKey = document.getElementById('publicKey').value;
-            const response = await fetch('/encrypt', {
+            const response = await fetch(`${API_URL}/encrypt`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message, public_key: publicKey })
@@ -61,7 +61,7 @@
         async function decryptMessage() {
             const encryptedMessage = document.getElementById('encryptedMessageToDecrypt').value;
             const privateKey = document.getElementById('privateKey').value;
-            const response = await fetch('/decrypt', {
+            const response = await fetch(`${API_URL}/decrypt`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ encrypted_message: encryptedMessage, private_key: privateKey })
